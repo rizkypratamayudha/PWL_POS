@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class usermodel extends Model
 {
@@ -14,4 +15,7 @@ class usermodel extends Model
 
     protected $fillable = ['level_id','username','nama','password'];
     
+    public function level():BelongsTo{
+        return $this->belongsTo(levelmodel::class,'level_id', 'level_id');
+    }
 }

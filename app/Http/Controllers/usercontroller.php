@@ -99,7 +99,7 @@ class usercontroller extends Controller
         // $user->wasChanged(['nama','username']);//true
         // dd($user->wasChanged(['nama','username']));
 
-        $user = usermodel::all();
+        $user = usermodel::with('level')->get();
         return view('user',['data'=>$user]);
     }
 

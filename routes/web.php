@@ -32,3 +32,5 @@ Route::get('/user/ubah/{id}',[usercontroller::class,'ubah']);
 Route::put('/user/ubah_simpan/{id}',[usercontroller::class,'ubah_simpan']);
 
 Route::get('/user/hapus/{id}',[usercontroller::class,'hapus']);
+
+Route::get('/indexrelationship',[usercontroller::class,'indexrelationship']);
