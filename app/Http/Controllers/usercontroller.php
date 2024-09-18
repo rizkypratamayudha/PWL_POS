@@ -41,9 +41,7 @@ class usercontroller extends Controller
         // $user = usermodel::all();
         // return view('user',['data'=>$user]);
 
-        $user = usermodel::findOr(20,['username','nama'], function(){
-            abort(404);
-        });
+        $user = usermodel::where('username','manager9')->firstOrFail();
         return view('user', ['data'=>$user]);
     }
 }
