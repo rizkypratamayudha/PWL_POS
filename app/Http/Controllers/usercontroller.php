@@ -31,14 +31,19 @@ class usercontroller extends Controller
 
 
         //Praktikum 4
-        $data = [
-            'level_id' => 2,
-            'username' => 'manager_tiga',
-            'nama' => 'Manager 3',
-            'password' => Hash::make('12345')
-        ];
-        usermodel::create($data);
-        $user = usermodel::all();
-        return view('user',['data'=>$user]);
+        // $data = [
+        //     'level_id' => 2,
+        //     'username' => 'manager_tiga',
+        //     'nama' => 'Manager 3',
+        //     'password' => Hash::make('12345')
+        // ];
+        // usermodel::create($data);
+        // $user = usermodel::all();
+        // return view('user',['data'=>$user]);
+
+        $user = usermodel::findOr(20,['username','nama'], function(){
+            abort(404);
+        });
+        return view('user', ['data'=>$user]);
     }
 }
