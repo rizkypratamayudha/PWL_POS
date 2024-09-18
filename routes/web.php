@@ -24,3 +24,11 @@ Route::get('/level',[levelcontroller::class, 'index']);
 Route::get('/kategori',[kategoricontroller::class,'index']);
 
 Route::get('/user',[usercontroller::class,'index']);
+
+Route::get('/user/tambah',[usercontroller::class, 'tambah']);
+Route::post('/user/tambah_simpan',[usercontroller::class,'tambah_simpan']);
+
+Route::get('/user/ubah/{id}',[usercontroller::class,'ubah']);
+Route::put('/user/ubah_simpan/{id}',[usercontroller::class,'ubah_simpan']);
+
+Route::get('/user/hapus/{id}',[usercontroller::class,'hapus']);
