@@ -4,6 +4,7 @@ use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\kategoricontroller;
 use App\Http\Controllers\levelcontroller;
 use App\Http\Controllers\usercontroller;
+use App\Http\Controllers\welcomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,4 +37,4 @@ use Illuminate\Support\Facades\Route;
 
 // Route::get('/indexrelationship',[usercontroller::class,'indexrelationship']);
 
-Route::get('/dashboard',[dashboardController::class,'index']);
+Route::get('/',[welcomeController::class,'index']);
