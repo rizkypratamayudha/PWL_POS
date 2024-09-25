@@ -18,23 +18,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/level',[levelcontroller::class, 'index']);
-// Route::get('/kategori',[kategoricontroller::class,'index']);
-
-// Route::get('/user',[usercontroller::class,'index']);
-
-// Route::get('/user/tambah',[usercontroller::class, 'tambah']);
-// Route::post('/user/tambah_simpan',[usercontroller::class,'tambah_simpan']);
-
-// Route::get('/user/ubah/{id}',[usercontroller::class,'ubah']);
-// Route::put('/user/ubah_simpan/{id}',[usercontroller::class,'ubah_simpan']);
-
-// Route::get('/user/hapus/{id}',[usercontroller::class,'hapus']);
-
-// Route::get('/indexrelationship',[usercontroller::class,'indexrelationship']);
 
 Route::get('/',[welcomeController::class,'index']);
+
+Route::group(['prefix'=>'user'], function(){
+    Route::get('/', [usercontroller::class, 'index']); //menampilkan halaman awal user
+    Route::post('/list',[usercontroller::class, 'list']); //menampilkan data user dalam bentuk json untuk data tables
+    Route::get('/create',[usercontroller::class,'create']); //menampilkan halaman form tambah user
+    Route::post('/',[usercontroller::class,'store']); //menyimpan data user baru
+    Route::get('/{id}',[usercontroller::class,'show']); //menampilkan detail user
+    Route::get('/{id}/edit',[usercontroller::class,'edit']); //menampilkan halaman form edit
+    Route::put('/{id}',[usercontroller::class,'update']);//meyimpan perubahan data user
+    Route::delete('/{id}',[usercontroller::class,'destroy']);//menghapus data user
+});
