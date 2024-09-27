@@ -36,7 +36,7 @@
                 <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Nama barang</label>
                     <div class="col-11">
-                        <input type="text" class="form-control" id="baranag_nama" name="barang_nama" value="{{ old('barang_nama') }}"
+                        <input type="text" class="form-control" id="barang_nama" name="barang_nama" value="{{ old('barang_nama') }}"
                             required>
                         @error('barang_nama')
                             <small class="form-text text-danger">{{ $message }}</small>

@@ -4,6 +4,7 @@ use App\Http\Controllers\barangcontroller;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\kategoricontroller;
 use App\Http\Controllers\levelcontroller;
+use App\Http\Controllers\stokcontroller;
 use App\Http\Controllers\suppliercontroller;
 use App\Http\Controllers\usercontroller;
 use App\Http\Controllers\welcomeController;
@@ -80,4 +81,16 @@ Route::group(['prefix' =>'supplier'],function(){
     Route::get('/{id}/edit',[suppliercontroller::class,'edit']);
     Route::put('/{id}',[suppliercontroller::class,'update']);
     Route::delete('/{id}',[suppliercontroller::class,'destroy']);
+});
+
+//route stok
+Route::group(['prefix' =>'stok'],function(){
+    Route::get('/',[stokcontroller::class,'index']);
+    Route::post('/list',[stokcontroller::class, 'list']);
+    Route::get('/create',[stokcontroller::class,'create']);
+    Route::post('/',[stokcontroller::class,'store']);
+    Route::get('/{id}',[stokcontroller::class,'show']);
+    Route::get('/{id}/edit',[stokcontroller::class,'edit']);
+    Route::put('/{id}',[stokcontroller::class,'update']);
+    Route::delete('/{id}',[stokcontroller::class,'destroy']);
 });

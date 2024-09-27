@@ -52,7 +52,7 @@ class barangcontroller extends Controller
             'title'=>'Tambah Barang baru'
         ];
         $kategori = kategorimodel::all();
-        $activeMenu = 'kategori';
+        $activeMenu = 'barang';
         return view('barang.create',['breadcrumb'=>$breadcrumb,'page'=>$page,'activeMenu'=>$activeMenu,'kategori'=>$kategori]);
     }
 
@@ -72,7 +72,7 @@ class barangcontroller extends Controller
             'harga_beli'=>$request->harga_beli,
         ]);
 
-        return redirect('/barang',)->with('success','Data barang berhasil disimpan');
+        return redirect('/barang')->with('success','Data barang berhasil disimpan');
     }
 
     public function show(string $barang_id){
