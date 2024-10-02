@@ -7,6 +7,7 @@ use App\Models\usermodel;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
 class usercontroller extends Controller
@@ -152,6 +153,39 @@ class usercontroller extends Controller
         } catch (\Illuminate\Database\QueryException $e){
             return redirect('/user')->with('error','Data user gagal dhapus karena masih terdapat tabel lain yang terkait dengan data ini');
         }
+    }
+
+    public function create_ajax(){
+        $level = levelmodel::select('level_id','level_nama')->get();
+
+        return view('user.create_ajax')->with('level',$level);
+    }
+
+    public function store_ajax(Request $request){
+        if ($request->ajax()||$request->wantsJson()){
+            $rules = [
+                'level_id'=>'required|integer',
+                'username'=>'required|string|min:3|unique:m_user,username',
+                'nama' =>'required|string|max:100',
+                'password'=>'required|min:6'
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()){
+                return response()->json([
+                    'status'=>false,
+                    'message'=>'Validasi Gagal',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+
+            usermodel::create($request->all());
+            return response()->json([
+                'status'=>true,
+                'message'=> 'Data user berhasil disimpan'
+            ]);
+        }
+        redirect('/');
     }
 
 }
