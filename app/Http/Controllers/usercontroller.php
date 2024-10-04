@@ -45,10 +45,10 @@ class usercontroller extends Controller
             ->addIndexColumn()
             ->addColumn('aksi', function ($user) { // menambahkan kolom aksi
                 /*$btn = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-               $btn .= '<a href="' . url('/user/' . $user->user_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-               $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">'
-                   . csrf_field() . method_field('DELETE') .
-                   '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';*/
+            $btn .= '<a href="' . url('/user/' . $user->user_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
+            $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">'
+                . csrf_field() . method_field('DELETE') .
+                '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Apakah Anda yakin menghapus data ini?\');">Hapus</button></form>';*/
                 $btn  = '<button onclick="modalAction(\'' . url('/user/' . $user->user_id .
                     '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/user/' . $user->user_id .
@@ -254,30 +254,46 @@ class usercontroller extends Controller
         return redirect('/');
     }
 
-    public function confirm_ajax(string $id){
+    public function confirm_ajax(string $id)
+    {
         $user   = usermodel::find($id);
 
-        return view('user.confirm_ajax',['user'=>$user]);
+        return view('user.confirm_ajax', ['user' => $user]);
     }
 
-    public function delete_ajax(Request $request, $id){
-        if ($request->ajax()||$request->wantsJson()){
+    public function delete_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
             $user = usermodel::find($id);
-            if ($user){
-                $user->delete();
+
+            if ($user) {
+                try {
+                    $user->delete();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data berhasil dihapus'
+                    ]);
+                } catch (\Illuminate\Database\QueryException $e) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Data gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini'
+                    ]);
+                }
+            } else {
                 return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil dihapus'
-                ]);
-            }
-            else {
-                return response()->json([
-                    'status'=>false,
-                    'message'=>'Data tidak ditemukan'
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
                 ]);
             }
         }
+
         return redirect('/');
     }
 
+    public function show_ajax(string $id)
+    {
+        $user   = usermodel::find($id);
+
+        return view('user.show_ajax', ['user' => $user]);
+    }
 }
