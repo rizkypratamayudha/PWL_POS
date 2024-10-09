@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\authcontroller;
 use App\Http\Controllers\barangcontroller;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\kategoricontroller;
@@ -21,8 +22,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::pattern('id','[0-9]+');
+Route::get('login',[authcontroller::class,'login'])->name('login');
+Route::post('login',[authcontroller::class,'postlogin']);
+Route::get('logout',[authcontroller::class,'logout'])->middleware('auth');
 
-Route::get('/',[welcomeController::class,'index']);
+Route::middleware(['auth'])->group(function(){
+
+    Route::get('/',[welcomeController::class,'index']);
 //route user
 Route::group(['prefix'=>'user'], function(){
     Route::get('/', [usercontroller::class, 'index']); //menampilkan halaman awal user
@@ -129,3 +136,6 @@ Route::group(['prefix' =>'stok'],function(){
     Route::put('/{id}',[stokcontroller::class,'update']);
     Route::delete('/{id}',[stokcontroller::class,'destroy']);
 });
+
+});
+

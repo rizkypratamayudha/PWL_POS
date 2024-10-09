@@ -29,13 +29,13 @@ class usercontroller extends Controller
         return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu, 'level' => $level]);
     }
 
-    // Ambil data user dalam bentuk json untuk datatables  
+    // Ambil data user dalam bentuk json untuk datatables
     public function list(Request $request)
     {
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
             ->with('level');
 
-        // Filter data user berdasarkan level_id 
+        // Filter data user berdasarkan level_id
         if ($request->level_id) {
             $users->where('level_id', $request->level_id);
         }
@@ -178,32 +178,37 @@ class usercontroller extends Controller
     }
 
     public function store_ajax(Request $request)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'level_id' => 'required|integer',
-                'username' => 'required|string|min:3|unique:m_user,username',
-                'nama' => 'required|string|max:100',
-                'password' => 'required|min:6'
-            ];
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            'level_id' => 'required|integer',
+            'username' => 'required|string|min:3|unique:m_user,username',
+            'nama' => 'required|string|max:100',
+            'password' => 'required|min:6'
+        ];
 
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors(),
-                ]);
-            }
-
-            usermodel::create($request->all());
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
             return response()->json([
-                'status' => true,
-                'message' => 'Data user berhasil disimpan'
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors(),
             ]);
         }
-        redirect('/');
+
+        // Hash the password before saving the user
+        $data = $request->all();
+        $data['password'] = Hash::make($request->password); // Hash the password
+
+        usermodel::create($data);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data user berhasil disimpan'
+        ]);
     }
+    return redirect('/');
+}
 
     public function edit_ajax(string $id)
     {
@@ -214,7 +219,7 @@ class usercontroller extends Controller
     }
     public function update_ajax(Request $request, $id)
     {
-        // cek apakah request dari ajax 
+        // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'level_id' => 'required|integer',
@@ -222,20 +227,20 @@ class usercontroller extends Controller
                 'nama'     => 'required|max:100',
                 'password' => 'nullable|min:6|max:20'
             ];
-            // use Illuminate\Support\Facades\Validator; 
+            // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status'   => false,    // respon json, true: berhasil, false: gagal 
+                    'status'   => false,    // respon json, true: berhasil, false: gagal
                     'message'  => 'Validasi gagal.',
-                    'msgField' => $validator->errors()  // menunjukkan field mana yang error 
+                    'msgField' => $validator->errors()  // menunjukkan field mana yang error
                 ]);
             }
 
             $check = UserModel::find($id);
             if ($check) {
-                if (!$request->filled('password')) { // jika password tidak diisi, maka hapus dari request 
+                if (!$request->filled('password')) { // jika password tidak diisi, maka hapus dari request
                     $request->request->remove('password');
                 }
 

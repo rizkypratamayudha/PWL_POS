@@ -131,9 +131,32 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                <i class="fas fa-th-large"></i>
+            <a class="nav-link" id="logout-link" data-slide="true" href="{{url('logout/')}}" role="button">
+                <i class="fas fa-sign-out-alt"></i>
             </a>
         </li>
     </ul>
 </nav>
+
+<script>
+    document.getElementById('logout-link').addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent the default link behavior
+
+        // Trigger SweetAlert2 confirmation dialog
+        Swal.fire({
+            title: 'Apakah yakin ingin keluar?',
+            text: "Session anda akan berakhir",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Log Out',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If user confirms, redirect to the logout URL
+                window.location.href = "{{ url('logout/') }}";
+            }
+        });
+    });
+</script>
