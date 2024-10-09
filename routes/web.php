@@ -50,7 +50,8 @@ Route::group(['prefix'=>'user'], function(){
 });
 
 //route level
-Route::group(['prefix' =>'level'],function(){
+
+Route::group(['prefix' =>'level', 'middleware' => 'authorize:ADM'],function(){
     Route::get('/',[levelcontroller::class,'index']);
     Route::post('/list',[levelcontroller::class, 'list']);
     Route::get('/create',[levelcontroller::class,'create']);
