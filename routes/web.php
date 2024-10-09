@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function(){
 
     Route::get('/',[welcomeController::class,'index']);
 //route user
-Route::group(['prefix'=>'user'], function(){
+Route::group(['prefix'=>'user', 'middleware'=>'authorize:ADM'], function(){
     Route::get('/', [usercontroller::class, 'index']); //menampilkan halaman awal user
     Route::post('/list',[usercontroller::class, 'list']); //menampilkan data user dalam bentuk json untuk data tables
     Route::get('/create',[usercontroller::class,'create']); //menampilkan halaman form tambah user
@@ -70,7 +70,7 @@ Route::group(['prefix' =>'level', 'middleware' => 'authorize:ADM'],function(){
 });
 
 //route kategori
-Route::group(['prefix' =>'kategori'],function(){
+Route::group(['prefix' =>'kategori','middleware'=>'authorize:ADM,MNG,STF'],function(){
     Route::get('/',[kategoricontroller::class,'index']);
     Route::post('/list',[kategoricontroller::class, 'list']);
     Route::get('/create',[kategoricontroller::class,'create']);
@@ -89,7 +89,7 @@ Route::group(['prefix' =>'kategori'],function(){
 });
 
 //route barang
-Route::group(['prefix' =>'barang'],function(){
+Route::group(['prefix' =>'barang','middleware'=>'authorize:ADM,MNG'],function(){
     Route::get('/',[barangcontroller::class,'index']);
     Route::post('/list',[barangcontroller::class, 'list']);
     Route::get('/create',[barangcontroller::class,'create']);
@@ -108,7 +108,7 @@ Route::group(['prefix' =>'barang'],function(){
 });
 
 //route supplier
-Route::group(['prefix' =>'supplier'],function(){
+Route::group(['prefix' =>'supplier', 'middleware'=>'authorize:ADM,MNG,STF'],function(){
     Route::get('/',[suppliercontroller::class,'index']);
     Route::post('/list',[suppliercontroller::class, 'list']);
     Route::get('/create',[suppliercontroller::class,'create']);
