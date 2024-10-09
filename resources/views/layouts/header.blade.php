@@ -132,7 +132,7 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" id="logout-link" data-slide="true" href="{{url('logout/')}}" role="button">
-                <i class="fas fa-sign-out-alt"></i>
+                <i class="fas fa-sign-out-alt" ></i>
             </a>
         </li>
     </ul>

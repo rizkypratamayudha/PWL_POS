@@ -5,6 +5,7 @@ use App\Http\Controllers\barangcontroller;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\kategoricontroller;
 use App\Http\Controllers\levelcontroller;
+use App\Http\Controllers\registercontroller;
 use App\Http\Controllers\stokcontroller;
 use App\Http\Controllers\suppliercontroller;
 use App\Http\Controllers\usercontroller;
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 Route::pattern('id','[0-9]+');
 Route::get('login',[authcontroller::class,'login'])->name('login');
 Route::post('login',[authcontroller::class,'postlogin']);
+Route::get('register',[registercontroller::class,'register']);
+Route::post('register',[registercontroller::class,'store']);
 Route::get('logout',[authcontroller::class,'logout'])->middleware('auth');
 
 Route::middleware(['auth'])->group(function(){
@@ -51,7 +54,7 @@ Route::group(['prefix'=>'user', 'middleware'=>'authorize:ADM'], function(){
 
 //route level
 
-Route::group(['prefix' =>'level', 'middleware' => 'authorize:ADM'],function(){
+Route::group(['prefix' =>'level', 'middleware'=>'authorize:ADM'],function(){
     Route::get('/',[levelcontroller::class,'index']);
     Route::post('/list',[levelcontroller::class, 'list']);
     Route::get('/create',[levelcontroller::class,'create']);
