@@ -7,6 +7,8 @@ use App\Models\kategorimodel;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Validator as ValidationValidator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\DataTables;
 
 class barangcontroller extends Controller
@@ -197,9 +199,9 @@ class barangcontroller extends Controller
             $validator = Validator::make($request->all(),$rules);
             if($validator->fails()){
                 return response()->json([
-                    'status'   => false,    // respon json, true: berhasil, false: gagal 
+                    'status'   => false,    // respon json, true: berhasil, false: gagal
                     'message'  => 'Validasi gagal.',
-                    'msgField' => $validator->errors() 
+                    'msgField' => $validator->errors()
                 ]);
             }
             $check = barangmodel::find($barang_id);
@@ -229,7 +231,7 @@ class barangcontroller extends Controller
     public function delete_ajax(Request $request, $barang_id){
         if ($request->ajax() || $request->wantsJson()) {
             $user = barangmodel::find($barang_id);
-            
+
             if ($user) {
                 try {
                     $user->delete();
@@ -250,11 +252,71 @@ class barangcontroller extends Controller
                 ]);
             }
         }
-    
+
         return redirect('/');
     }
     public function show_ajax(string $barang_id){
         $barang = barangmodel::find($barang_id);
         return view('barang.show_ajax',['barang'=>$barang]);
+    }
+
+    public function import(){
+        return view('barang.import');
+    }
+
+    public function import_ajax(Request $request){
+        if($request->ajax() || $request->wantsJson()){
+            $rules = [
+                //validasi file harus format apa
+                'file_barang'=>['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(),$rules);
+            if($validator->fails()){
+                return response()->json([
+                    'status'=>false,
+                    'message'=> 'Validasi gagal',
+                    'msgField'=> $validator->errors()
+                ]);
+            }
+            $file = $request ->file('file_barang'); //mengambil dari file request
+            $reader = IOFactory::createReader('Xlsx'); //load reader file excel
+            $reader->setReadDataOnly(true); //hanya membaca data
+            $spreadsheet = $reader->load($file->getRealPath()); //load file excel
+            $sheet = $spreadsheet->getActiveSheet(); //ambil sheetyang
+
+            $data =$sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if(count($data) > 1){
+                foreach ($data as $baris => $value){
+                    if ($baris > 1){
+                        $insert[] = [
+                            'kategori_id' => $value['A'],
+                            'barang_kode' => $value['B'],
+                            'barang_nama' => $value['C'],
+                            'harga_beli' => $value['D'],
+                            'harga_jual' => $value['E'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+                if(count($insert) > 0){
+                    //inser data ke databasse, ika data sudah ada, maka diabaikan
+                    barangmodel::insertOrIgnore($insert);
+                }
+                return response()->json([
+                    'status'=>true,
+                    'message'=>'Data berhasil diimport'
+                ]);
+            }
+            else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+        return redirect('/');
     }
 }
