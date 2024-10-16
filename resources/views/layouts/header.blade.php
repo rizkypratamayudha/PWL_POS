@@ -126,17 +126,42 @@
             </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                <i class="fas fa-expand-arrows-alt"></i>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="logout-link" data-slide="true" href="{{url('logout/')}}" role="button">
-                <i class="fas fa-sign-out-alt" ></i>
+            <a class="nav-link" data-toggle="modal" data-target="#profileModal" role="button">
+                <i class="fas fa-user"></i>
             </a>
         </li>
     </ul>
 </nav>
+
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100" id="profileModalLabel">Profile anda</h5>
+            </div>
+            <div class="modal-body text-center">
+                <div class="profile-info">
+                    <div>
+                        <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('user.png') }}"
+                alt="User Avatar"
+                class="img-fluid rounded-circle"
+                style="width: 120px; height: 120px; object-fit: cover;">
+                    </div> <!--avatar profile yang bisa berupa gambar-->
+                    <div class="mb-2 mt-2">
+                        <h4 class="font-weight-bold">{{Auth::user()->username}}</h4>
+                    </div> <!--username yang login -->
+                    <div>
+                        <span style="font-size: 16px; padding: 8px 15px;">{{Auth::user()->level->level_nama}}</span>
+                    </div> <!--level_nama dari username yang login-->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <a href="{{url('profile/edit/')}}" class="btn btn-info">Edit Profile</a>
+                <a id="logout-link" class="btn btn-danger" href="{{url('logout/')}}">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     document.getElementById('logout-link').addEventListener('click', function (e) {
@@ -148,8 +173,8 @@
             text: "Session anda akan berakhir",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Log Out',
             cancelButtonText: 'Batal'
         }).then((result) => {

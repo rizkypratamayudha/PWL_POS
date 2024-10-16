@@ -5,6 +5,7 @@ use App\Http\Controllers\barangcontroller;
 use App\Http\Controllers\dashboardController;
 use App\Http\Controllers\kategoricontroller;
 use App\Http\Controllers\levelcontroller;
+use App\Http\Controllers\profilecontroller;
 use App\Http\Controllers\registercontroller;
 use App\Http\Controllers\stokcontroller;
 use App\Http\Controllers\suppliercontroller;
@@ -159,6 +160,11 @@ Route::group(['prefix' =>'stok'],function(){
     Route::get('/{id}/edit',[stokcontroller::class,'edit']);
     Route::put('/{id}',[stokcontroller::class,'update']);
     Route::delete('/{id}',[stokcontroller::class,'destroy']);
+});
+
+Route::group(['prefix'=>'profile'], function(){
+    Route::get('/edit',[profilecontroller::class,'edit']);
+    Route::put('/update',[profilecontroller::class,'update']);
 });
 
 });

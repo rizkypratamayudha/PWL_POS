@@ -14,7 +14,7 @@ class usermodel extends Authenticatable
     protected $table = 'm_user'; //mendefinisikan nama tabel yang digunakan oleh model
     protected $primaryKey = 'user_id'; //mendefinisikan primary key dari table yang digunakan
 
-    protected $fillable = ['level_id','username','nama','password','created_at','updated_at'];
+    protected $fillable = ['level_id','username','nama','password','avatar','created_at','updated_at'];
 
     protected $hidden = ['password'];
 
@@ -26,6 +26,10 @@ class usermodel extends Authenticatable
 
     public function getRoleName(){
         return $this->level->level_nama;
+    }
+
+    public function getUsername(){
+        return $this->username;
     }
 
     public function hasRole($role){
