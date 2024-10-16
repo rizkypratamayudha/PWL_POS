@@ -116,6 +116,7 @@ Route::group(['prefix' =>'barang','middleware'=>'authorize:ADM,MNG'],function(){
     Route::delete('/{id}',[barangcontroller::class,'destroy']);
     Route::get('/import',[barangcontroller::class,'import']);
     Route::post('/import_ajax',[barangcontroller::class,'import_ajax']);
+    Route::get('/export_excel',[barangcontroller::class,'export_excel']);
 });
 
 //route supplier
