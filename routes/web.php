@@ -52,6 +52,7 @@ Route::group(['prefix'=>'user', 'middleware'=>'authorize:ADM'], function(){
     Route::delete('/{id}',[usercontroller::class,'destroy']);//menghapus data user
     Route::get('/import',[usercontroller::class,'import']);
     Route::post('/import_ajax',[usercontroller::class,'import_ajax']);
+    Route::get('/export_excel',[usercontroller::class,'export_excel']);
 });
 
 //route level
@@ -74,6 +75,7 @@ Route::group(['prefix' =>'level', 'middleware'=>'authorize:ADM'],function(){
     Route::delete('/{id}',[levelcontroller::class,'destroy']);
     Route::get('/import',[levelcontroller::class,'import']);
     Route::post('/import_ajax',[levelcontroller::class,'import_ajax']);
+    Route::get('/export_excel',[levelcontroller::class,'export_excel']);
 });
 
 //route kategori
@@ -95,6 +97,7 @@ Route::group(['prefix' =>'kategori','middleware'=>'authorize:ADM,MNG,STF'],funct
     Route::delete('/{id}',[kategoricontroller::class,'destroy']);
     Route::get('/import',[kategoricontroller::class,'import']);
     Route::post('/import_ajax',[kategoricontroller::class,'import_ajax']);
+    Route::get('/export_excel',[kategoricontroller::class,'export_excel']);
 });
 
 //route barang
@@ -138,6 +141,7 @@ Route::group(['prefix' =>'supplier', 'middleware'=>'authorize:ADM,MNG,STF'],func
     Route::delete('/{id}',[suppliercontroller::class,'destroy']);
     Route::get('/import',[suppliercontroller::class,'import']);
     Route::post('/import_ajax',[suppliercontroller::class,'import_ajax']);
+    Route::get('/export_excel',[suppliercontroller::class,'export_excel']);
 });
 
 //route stok
