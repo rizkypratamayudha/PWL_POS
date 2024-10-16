@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\levelmodel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -362,5 +363,17 @@ class levelcontroller extends Controller
         // Simpan file dan kirim ke output
         $writer->save('php://output');
         exit;
+    }
+
+    public function export_pdf(){
+        $level = levelmodel::select('level_kode','level_nama')
+        ->get();
+
+        $pdf = Pdf::loadView('level.export_pdf',['level'=>$level]);
+        $pdf->setPaper('a4','portrait'); //set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); //set true jika ada gambar
+        $pdf->render();
+
+        return $pdf->stream('Data level '.date('Y-m-d H:i:s'));
     }
 }

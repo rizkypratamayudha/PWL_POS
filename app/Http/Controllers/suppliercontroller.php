@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\suppliermodel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
@@ -349,5 +350,17 @@ class suppliercontroller extends Controller
         // Simpan file dan kirim ke output
         $writer->save('php://output');
         exit;
+    }
+
+    public function export_pdf(){
+        $supplier = suppliermodel::select('supplier_kode','supplier_nama')
+        ->get();
+
+        $pdf = Pdf::loadView('supplier.export_pdf',['supplier'=>$supplier]);
+        $pdf->setPaper('a4','portrait'); //set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); //set true jika ada gambar
+        $pdf->render();
+
+        return $pdf->stream('Data supplier '.date('Y-m-d H:i:s'));
     }
 }

@@ -53,6 +53,7 @@ Route::group(['prefix'=>'user', 'middleware'=>'authorize:ADM'], function(){
     Route::get('/import',[usercontroller::class,'import']);
     Route::post('/import_ajax',[usercontroller::class,'import_ajax']);
     Route::get('/export_excel',[usercontroller::class,'export_excel']);
+    Route::get('/export_pdf',[usercontroller::class,'export_pdf']);
 });
 
 //route level
@@ -76,6 +77,7 @@ Route::group(['prefix' =>'level', 'middleware'=>'authorize:ADM'],function(){
     Route::get('/import',[levelcontroller::class,'import']);
     Route::post('/import_ajax',[levelcontroller::class,'import_ajax']);
     Route::get('/export_excel',[levelcontroller::class,'export_excel']);
+    Route::get('/export_pdf',[levelcontroller::class,'export_pdf']);
 });
 
 //route kategori
@@ -98,6 +100,7 @@ Route::group(['prefix' =>'kategori','middleware'=>'authorize:ADM,MNG,STF'],funct
     Route::get('/import',[kategoricontroller::class,'import']);
     Route::post('/import_ajax',[kategoricontroller::class,'import_ajax']);
     Route::get('/export_excel',[kategoricontroller::class,'export_excel']);
+    Route::get('export_pdf',[kategoricontroller::class,'export_pdf']);
 });
 
 //route barang
@@ -120,6 +123,7 @@ Route::group(['prefix' =>'barang','middleware'=>'authorize:ADM,MNG'],function(){
     Route::get('/import',[barangcontroller::class,'import']);
     Route::post('/import_ajax',[barangcontroller::class,'import_ajax']);
     Route::get('/export_excel',[barangcontroller::class,'export_excel']);
+    Route::get('/export_pdf',[barangcontroller::class,'export_pdf']);
 });
 
 //route supplier
@@ -142,6 +146,7 @@ Route::group(['prefix' =>'supplier', 'middleware'=>'authorize:ADM,MNG,STF'],func
     Route::get('/import',[suppliercontroller::class,'import']);
     Route::post('/import_ajax',[suppliercontroller::class,'import_ajax']);
     Route::get('/export_excel',[suppliercontroller::class,'export_excel']);
+    Route::get('/export_pdf',[suppliercontroller::class,'export_pdf']);
 });
 
 //route stok

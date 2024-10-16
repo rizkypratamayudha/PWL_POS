@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\levelmodel;
 use App\Models\usermodel;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -348,7 +348,7 @@ public function update_ajax(Request $request, $id)
                             'level_id' => $value['A'],
                             'username' => $value['B'],
                             'nama' => $value['C'],
-                            'password' => $value['D'],
+                            'password' => Hash::make($value['D']),
                             'created_at' => now(),
                         ];
                     }
@@ -374,7 +374,7 @@ public function update_ajax(Request $request, $id)
 
     public function export_excel()
     {
-        $user = usermodel::select('level_id', 'username', 'nama', 'password')
+        $user = usermodel::select('level_id', 'username', 'nama')
             ->orderBy('level_id')
             ->with('level')
             ->get();
@@ -385,9 +385,8 @@ public function update_ajax(Request $request, $id)
         // Set Header Kolom
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'username');
-        $sheet->setCellValue('C1', 'nama');
-        $sheet->setCellValue('D1', 'password');
-        $sheet->setCellValue('F1', 'level');
+        $sheet->setCellValue('C1', 'nama');;
+        $sheet->setCellValue('D1', 'level');
 
         // Buat header menjadi bold
         $sheet->getStyle('A1:F1')->getFont()->setBold(true);
@@ -398,8 +397,7 @@ public function update_ajax(Request $request, $id)
             $sheet->setCellValue('A' . $baris, $no);
             $sheet->setCellValue('B' . $baris, $value->username);
             $sheet->setCellValue('C' . $baris, $value->nama);
-            $sheet->setCellValue('D' . $baris, $value->password);
-            $sheet->setCellValue('E' . $baris, $value->level->level_nama);
+            $sheet->setCellValue('D' . $baris, $value->level->level_nama);
             $baris++;
             $no++;
         }
@@ -429,5 +427,18 @@ public function update_ajax(Request $request, $id)
         // Simpan file dan kirim ke output
         $writer->save('php://output');
         exit;
+    }
+
+    public function export_pdf(){
+        $user = usermodel::select('level_id','username','nama')
+        ->orderBy('level_id')
+        ->with('level')->get();
+
+        $pdf = Pdf::loadView('user.export_pdf',['user'=>$user]);
+        $pdf->setPaper('a4','portrait'); //set ukuran kertas dan orientasi
+        $pdf->setOption("isRemoteEnabled", true); //set true jika ada gambar
+        $pdf->render();
+
+        return $pdf->stream('Data level '.date('Y-m-d H:i:s'));
     }
 }
