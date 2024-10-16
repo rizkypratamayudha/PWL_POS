@@ -50,6 +50,8 @@ Route::group(['prefix'=>'user', 'middleware'=>'authorize:ADM'], function(){
     Route::delete('/{id}/delete_ajax',[usercontroller::class,'delete_ajax']);
     Route::get('/{id}/show_ajax',[usercontroller::class,'show_ajax']);
     Route::delete('/{id}',[usercontroller::class,'destroy']);//menghapus data user
+    Route::get('/import',[usercontroller::class,'import']);
+    Route::post('/import_ajax',[usercontroller::class,'import_ajax']);
 });
 
 //route level
@@ -70,6 +72,8 @@ Route::group(['prefix' =>'level', 'middleware'=>'authorize:ADM'],function(){
     Route::delete('/{id}/delete_ajax',[levelcontroller::class,'delete_ajax']);
     Route::get('/{id}/show_ajax',[levelcontroller::class,'show_ajax']);
     Route::delete('/{id}',[levelcontroller::class,'destroy']);
+    Route::get('/import',[levelcontroller::class,'import']);
+    Route::post('/import_ajax',[levelcontroller::class,'import_ajax']);
 });
 
 //route kategori
@@ -89,6 +93,8 @@ Route::group(['prefix' =>'kategori','middleware'=>'authorize:ADM,MNG,STF'],funct
     Route::delete('/{id}/delete_ajax',[kategoricontroller::class,'delete_ajax']);
     Route::get('/{id}/show_ajax',[kategoricontroller::class,'show_ajax']);
     Route::delete('/{id}',[kategoricontroller::class,'destroy']);
+    Route::get('/import',[kategoricontroller::class,'import']);
+    Route::post('/import_ajax',[kategoricontroller::class,'import_ajax']);
 });
 
 //route barang
@@ -129,6 +135,8 @@ Route::group(['prefix' =>'supplier', 'middleware'=>'authorize:ADM,MNG,STF'],func
     Route::delete('/{id}/delete_ajax',[suppliercontroller::class,'delete_ajax']);
     Route::get('/{id}/show_ajax',[suppliercontroller::class,'show_ajax']);
     Route::delete('/{id}',[suppliercontroller::class,'destroy']);
+    Route::get('/import',[suppliercontroller::class,'import']);
+    Route::post('/import_ajax',[suppliercontroller::class,'import_ajax']);
 });
 
 //route stok

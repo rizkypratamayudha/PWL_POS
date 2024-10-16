@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class suppliercontroller extends Controller
 {
@@ -121,13 +122,13 @@ class suppliercontroller extends Controller
     public function destroy(string $supplier_id){
         $check = suppliermodel::find($supplier_id);
         if (!$check) {
-            return redirect('/supplier')->with('error', 'Data level tidak ditemukan');
+            return redirect('/supplier')->with('error', 'Data supplier tidak ditemukan');
         }
         try {
             suppliermodel::destroy($supplier_id);
-            return redirect('/supplier')->with('success', 'Data level berhasil dihapus');
+            return redirect('/supplier')->with('success', 'Data supplier berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
-            return redirect('/supplier')->with('error', 'Data level gagal dhapus karena masih terdapat tabel lain yang terkait dengan data ini');
+            return redirect('/supplier')->with('error', 'Data supplier gagal dhapus karena masih terdapat tabel lain yang terkait dengan data ini');
         }
     }
 
@@ -206,7 +207,7 @@ class suppliercontroller extends Controller
     public function delete_ajax(Request $request, $supplier_id){
         if ($request->ajax() || $request->wantsJson()) {
             $user = suppliermodel::find($supplier_id);
-            
+
             if ($user) {
                 try {
                     $user->delete();
@@ -227,12 +228,70 @@ class suppliercontroller extends Controller
                 ]);
             }
         }
-    
+
         return redirect('/');
     }
 
     public function show_ajax(string $supplier_id){
         $supplier = suppliermodel::find($supplier_id);
         return view('supplier.show_ajax',['supplier'=>$supplier]);
+    }
+
+    public function import(){
+        return view('supplier.import');
+    }
+
+    public function import_ajax(Request $request){
+        if($request->ajax() || $request->wantsJson()){
+            $rules = [
+                //validasi file harus format apa
+                'file_supplier'=>['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(),$rules);
+            if($validator->fails()){
+                return response()->json([
+                    'status'=>false,
+                    'message'=> 'Validasi gagal',
+                    'msgField'=> $validator->errors()
+                ]);
+            }
+            $file = $request ->file('file_supplier'); //mengambil dari file request
+            $reader = IOFactory::createReader('Xlsx'); //load reader file excel
+            $reader->setReadDataOnly(true); //hanya membaca data
+            $spreadsheet = $reader->load($file->getRealPath()); //load file excel
+            $sheet = $spreadsheet->getActiveSheet(); //ambil sheetyang
+
+            $data =$sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if(count($data) > 1){
+                foreach ($data as $baris => $value){
+                    if ($baris > 1){
+                        $insert[] = [
+                            'supplier_kode' => $value['A'],
+                            'supplier_nama' => $value['B'],
+                            'supplier_alamat' => $value['C'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+                if(count($insert) > 0){
+                    //inser data ke databasse, ika data sudah ada, maka diabaikan
+                    suppliermodel::insertOrIgnore($insert);
+                }
+                return response()->json([
+                    'status'=>true,
+                    'message'=>'Data berhasil diimport'
+                ]);
+            }
+            else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+        return redirect('/');
     }
 }

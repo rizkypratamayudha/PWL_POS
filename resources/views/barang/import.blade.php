@@ -12,7 +12,7 @@
                 <div class="form-group">
                     <label>Download Template</label>
                     <a href="{{ asset('template_barang.xlsx') }}" class="btn btn-info btn-sm" download>
-                        <i class="fa fa-file-excel"></i>Download
+                        <i class="fa fa-file-excel"> Download</i>
                     </a>
                     <small id="error-kategori_id" class="error-text form-text text-danger"></small>
                 </div>
@@ -52,7 +52,7 @@
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            tableBarang.ajax.reload(); // reload datatable
+                            dataBarang.ajax.reload(); // reload datatable
                         } else { // jika error
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {

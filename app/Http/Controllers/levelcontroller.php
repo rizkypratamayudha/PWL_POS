@@ -6,6 +6,7 @@ use App\Models\levelmodel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
 
 class levelcontroller extends Controller
@@ -87,11 +88,11 @@ class levelcontroller extends Controller
         $level = levelmodel::find($level_id);
 
         $breadcrumb = (object)[
-            'title' => 'Detail Level',
+            'title' => 'Detail level',
             'list' => ['Home', 'level', 'detail']
         ];
         $page = (object)[
-            'title' => 'Detail Level'
+            'title' => 'Detail level'
         ];
         $activeMenu = 'level';
         return view('level.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
@@ -102,7 +103,7 @@ class levelcontroller extends Controller
         $level = levelmodel::find($level_id);
 
         $breadcrumb = (object)[
-            'title' => 'Edit Level',
+            'title' => 'Edit level',
             'list' => ['Home', 'level', 'edit']
         ];
         $page = (object)[
@@ -178,21 +179,21 @@ class levelcontroller extends Controller
 
     public function update_ajax(Request $request, $level_id)
     {
-        // cek apakah request dari ajax 
+        // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'level_kode' => 'required|string|unique:m_level,level_kode',
                 'level_nama'=>'required|string|max:100'
-                
+
             ];
-            // use Illuminate\Support\Facades\Validator; 
+            // use Illuminate\Support\Facades\Validator;
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status'   => false,    // respon json, true: berhasil, false: gagal 
+                    'status'   => false,    // respon json, true: berhasil, false: gagal
                     'message'  => 'Validasi gagal.',
-                    'msgField' => $validator->errors()  // menunjukkan field mana yang error 
+                    'msgField' => $validator->errors()  // menunjukkan field mana yang error
                 ]);
             }
 
@@ -222,11 +223,11 @@ class levelcontroller extends Controller
     public function delete_ajax(Request $request, $level_id)
 {
     if ($request->ajax() || $request->wantsJson()) {
-        $user = levelmodel::find($level_id);
-        
-        if ($user) {
+        $level = levelmodel::find($level_id);
+
+        if ($level) {
             try {
-                $user->delete();
+                $level->delete();
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil dihapus'
@@ -251,5 +252,62 @@ class levelcontroller extends Controller
         $level = levelmodel::find($level_id);
 
         return view('level.show_ajax',['level'=>$level]);
+    }
+
+    public function import(){
+        return view('level.import');
+    }
+
+    public function import_ajax(Request $request){
+        if($request->ajax() || $request->wantsJson()){
+            $rules = [
+                //validasi file harus format apa
+                'file_level'=>['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(),$rules);
+            if($validator->fails()){
+                return response()->json([
+                    'status'=>false,
+                    'message'=> 'Validasi gagal',
+                    'msgField'=> $validator->errors()
+                ]);
+            }
+            $file = $request ->file('file_level'); //mengambil dari file request
+            $reader = IOFactory::createReader('Xlsx'); //load reader file excel
+            $reader->setReadDataOnly(true); //hanya membaca data
+            $spreadsheet = $reader->load($file->getRealPath()); //load file excel
+            $sheet = $spreadsheet->getActiveSheet(); //ambil sheetyang
+
+            $data =$sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if(count($data) > 1){
+                foreach ($data as $baris => $value){
+                    if ($baris > 1){
+                        $insert[] = [
+                            'level_kode' => $value['A'],
+                            'level_nama' => $value['B'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+                if(count($insert) > 0){
+                    //inser data ke databasse, ika data sudah ada, maka diabaikan
+                    levelmodel::insertOrIgnore($insert);
+                }
+                return response()->json([
+                    'status'=>true,
+                    'message'=>'Data berhasil diimport'
+                ]);
+            }
+            else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+        return redirect('/');
     }
 }

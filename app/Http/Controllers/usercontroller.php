@@ -8,6 +8,7 @@ use App\Models\usermodel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\DataTables;
 
 class usercontroller extends Controller
@@ -309,5 +310,64 @@ public function update_ajax(Request $request, $id)
         $user   = usermodel::find($id);
 
         return view('user.show_ajax', ['user' => $user]);
+    }
+
+    public function import(){
+        return view('user.import');
+    }
+
+    public function import_ajax(Request $request){
+        if($request->ajax() || $request->wantsJson()){
+            $rules = [
+                //validasi file harus format apa
+                'file_user'=>['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(),$rules);
+            if($validator->fails()){
+                return response()->json([
+                    'status'=>false,
+                    'message'=> 'Validasi gagal',
+                    'msgField'=> $validator->errors()
+                ]);
+            }
+            $file = $request ->file('file_user'); //mengambil dari file request
+            $reader = IOFactory::createReader('Xlsx'); //load reader file excel
+            $reader->setReadDataOnly(true); //hanya membaca data
+            $spreadsheet = $reader->load($file->getRealPath()); //load file excel
+            $sheet = $spreadsheet->getActiveSheet(); //ambil sheetyang
+
+            $data =$sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if(count($data) > 1){
+                foreach ($data as $baris => $value){
+                    if ($baris > 1){
+                        $insert[] = [
+                            'level_id' => $value['A'],
+                            'username' => $value['B'],
+                            'nama' => $value['C'],
+                            'password' => $value['D'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+                if(count($insert) > 0){
+                    //inser data ke databasse, ika data sudah ada, maka diabaikan
+                    usermodel::insertOrIgnore($insert);
+                }
+                return response()->json([
+                    'status'=>true,
+                    'message'=>'Data berhasil diimport'
+                ]);
+            }
+            else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+        return redirect('/');
     }
 }

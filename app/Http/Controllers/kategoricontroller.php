@@ -5,6 +5,7 @@ use App\Models\kategorimodel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\DataTables as DataTablesDataTables;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -114,7 +115,7 @@ class kategoricontroller extends Controller
         ]);
         return redirect('/kategori')->with('success','Data kategori berhasil diperbarui');
     }
-    
+
     public function destroy(string $kategori_id){
         $check = kategorimodel::find($kategori_id);
         if (!$check) {
@@ -171,9 +172,9 @@ class kategoricontroller extends Controller
 
             if($validator->fails()){
                 return response()->json([
-                    'status'   => false,    // respon json, true: berhasil, false: gagal 
+                    'status'   => false,    // respon json, true: berhasil, false: gagal
                     'message'  => 'Validasi gagal.',
-                    'msgField' => $validator->errors() 
+                    'msgField' => $validator->errors()
                 ]);
             }
 
@@ -204,7 +205,7 @@ class kategoricontroller extends Controller
     public function delete_ajax(Request $request, $kategori_id){
         if ($request->ajax() || $request->wantsJson()) {
             $user = kategorimodel::find($kategori_id);
-            
+
             if ($user) {
                 try {
                     $user->delete();
@@ -225,7 +226,7 @@ class kategoricontroller extends Controller
                 ]);
             }
         }
-    
+
         return redirect('/');
     }
 
@@ -233,5 +234,62 @@ class kategoricontroller extends Controller
         $kategori = kategorimodel::find($kategori_id);
 
         return view('kategori.show_ajax',['kategori'=>$kategori]);
+    }
+
+    public function import(){
+        return view('kategori.import');
+    }
+
+    public function import_ajax(Request $request){
+        if($request->ajax() || $request->wantsJson()){
+            $rules = [
+                //validasi file harus format apa
+                'file_kategori'=>['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(),$rules);
+            if($validator->fails()){
+                return response()->json([
+                    'status'=>false,
+                    'message'=> 'Validasi gagal',
+                    'msgField'=> $validator->errors()
+                ]);
+            }
+            $file = $request ->file('file_kategori'); //mengambil dari file request
+            $reader = IOFactory::createReader('Xlsx'); //load reader file excel
+            $reader->setReadDataOnly(true); //hanya membaca data
+            $spreadsheet = $reader->load($file->getRealPath()); //load file excel
+            $sheet = $spreadsheet->getActiveSheet(); //ambil sheetyang
+
+            $data =$sheet->toArray(null, false, true, true);
+
+            $insert = [];
+            if(count($data) > 1){
+                foreach ($data as $baris => $value){
+                    if ($baris > 1){
+                        $insert[] = [
+                            'kategori_kode' => $value['A'],
+                            'kategori_nama' => $value['B'],
+                            'created_at' => now(),
+                        ];
+                    }
+                }
+                if(count($insert) > 0){
+                    //inser data ke databasse, ika data sudah ada, maka diabaikan
+                    kategorimodel::insertOrIgnore($insert);
+                }
+                return response()->json([
+                    'status'=>true,
+                    'message'=>'Data berhasil diimport'
+                ]);
+            }
+            else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang diimport'
+                ]);
+            }
+        }
+        return redirect('/');
     }
 }
