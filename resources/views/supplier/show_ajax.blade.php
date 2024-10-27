@@ -40,6 +40,10 @@
                             <th class="text-right col-3">Nama Supplier:</th>
                             <td class="col-9">{{ $supplier->supplier_nama }}</td>
                         </tr>
+                        <tr>
+                            <th class="text-right col-3">Alamat Supplier:</th>
+                            <td class="col-9">{{ $supplier->supplier_alamat }}</td>
+                        </tr>
                     </table>
                 </div>
             </div>

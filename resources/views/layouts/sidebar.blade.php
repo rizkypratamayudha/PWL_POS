@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-dark-primary elevation-4 position-fixed">
     <!-- Brand Logo -->
     <a href="{{ url('/') }}" class="brand-link">
         <img src="{{ asset('adminlte/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
@@ -71,7 +71,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ url('/barang') }}"
+                    <a href="{{ url('/penjualan') }}"
                         class="nav-link {{ $activeMenu == 'penjualan' ? 'active' : '' }} ">
                         <i class="nav-icon fas fa-cash-register"></i>
                         <p>Transaksi Penjualan</p>

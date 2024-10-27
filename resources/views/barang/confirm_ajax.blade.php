@@ -33,6 +33,9 @@
                     </div>
                     <table class="table table-sm table-bordered table-striped">
                         <tr>
+                            <th class="text-right col-3">ID Kategori :</th>
+                            <td class="col-9">{{ $barang->kategori->kategori_id }}</td>
+                        </tr>
                             <th class="text-right col-3">Nama Kategori :</th>
                             <td class="col-9">{{ $barang->kategori->kategori_nama }}</td>
                         </tr>
@@ -55,7 +58,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn btnwarning">Batal</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
                     <button type="submit" class="btn btn-primary">Ya, Hapus</button>
                 </div>
             </div>

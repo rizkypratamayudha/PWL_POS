@@ -167,7 +167,7 @@ class kategoricontroller extends Controller
     public function update_ajax(Request $request, $kategori_id){
         if($request->ajax()||$request->wantsJson()){
             $rules = [
-                'kategori_kode'=>'required|string|unique:m_kategori,kategori_kode',
+                'kategori_kode'=>'required|string|unique:m_kategori,kategori_kode,' . $kategori_id . ',kategori_id',
                 'kategori_nama'=>'required|string|max:100'
             ];
             $validator = Validator::make($request->all(), $rules);

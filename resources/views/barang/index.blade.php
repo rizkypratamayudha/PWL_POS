@@ -128,7 +128,7 @@
                     {
                         data: "kategori.kategori_nama",
                         className: "",
-                        orderable: true,
+                        orderable: false,
                         searchable: true
                     },
                     {
