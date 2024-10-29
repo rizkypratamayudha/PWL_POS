@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request){
+    public function __invoke(Request $request){
         $validator = Validator::make($request->all(),[
             'username'=>'required',
             'nama'=>'required',
