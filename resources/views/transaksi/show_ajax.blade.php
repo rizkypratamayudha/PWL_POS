@@ -67,6 +67,9 @@
                         @endphp
                         <tbody>
                             <tr>
+                                <td class="col-4">
+                                    <img src="{{ $detail->barang->avatar ? asset('images/' . $detail->barang->avatar) : asset('barang.png') }}" alt="gambar barang" style="width: 50px;">
+                                </td>
                                 <td class="col-9">{{ $detail->barang->barang_nama }}</td>
                                 <td class="col-9">{{ $detail->barang->harga_jual }}</td>
                                 <td class="col-9">{{ $detail->jumlah }}</td>

@@ -191,6 +191,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export_pdf', [transaksicontroller::class, 'export_pdf']);
         Route::get('/getHarga/{id}', [transaksicontroller::class, 'getHarga']);
         Route::get('/getStok/{id}', [transaksicontroller::class, 'getStok']);
+        Route::get('/getAvatar/{id}', [transaksicontroller::class, 'getAvatar']);
     });
 
     Route::group(['prefix' => 'profile','middleware' => 'authorize:ADM,MNG,STF,GDA'], function () {

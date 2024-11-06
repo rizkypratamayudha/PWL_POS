@@ -52,6 +52,12 @@
                             <th class="text-right col-3">Harga Beli :</th>
                             <td class="col-9" id="harga_beli">{{ $barang->harga_beli }}</td>
                         </tr>
+                        <tr>
+                            <th class="text-right col-3">Gambar Barang :</th>
+                            <td class="col-9" id="avatar">
+                                <img src="{{ $barang->avatar ? asset('images/' . $barang->avatar) : asset('barang.png') }}" alt="gambar barang" style="width: 50px;">
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>

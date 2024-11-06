@@ -61,6 +61,7 @@
                     <thead>
                         <tr>
                             <th>Nama Barang</th>
+                            <th>Gambar Barang</th>
                             <th>Harga Satuan</th>
                             <th>Stok</th>
                             <th>Jumlah</th>
@@ -113,6 +114,9 @@
                             </select>
                         </td>
                         <td>
+                            <img style="width: 50px;">
+                        </td>
+                        <td>
                             <input value="" type="number" name="harga_satuan[]" class="form-control harga-satuan" disabled>
                         </td>
                         <td>
@@ -139,6 +143,7 @@
                 var barangId = $(this).val();
                 var hargaSatuanInput = $(this).closest('tr').find('input[name="harga_satuan[]"]');
                 var stokInput = $(this).closest('tr').find('input[name="stok[]"]');
+                var avatarImg = $(this).closest('tr').find('img');
 
                 if (barangId) {
                     $.ajax({
@@ -164,9 +169,22 @@
                             stokInput.val('');
                         }
                     });
+                    $.ajax({
+                        url: 'penjualan/getAvatar/' + barangId,
+                        method: 'GET',
+                        success: function(data) {
+                            avatarImg.attr('src', '{{ asset('images') }}/' + data.avatar);
+                        },
+                        error: function() {
+                            avatarImg.attr('src',
+                            '{{ asset("barang.png") }}');
+                        }
+                    });
+
                 } else {
                     hargaSatuanInput.val('');
                     stokInput.val('');
+                    avatarImg.attr('src', '{{ asset("barang.png") }}');
                 }
             });
 

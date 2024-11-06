@@ -165,32 +165,47 @@ class barangcontroller extends Controller
     }
 
     public function store_ajax(Request $request)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'kategori_id' => 'required|integer',
-                'barang_kode' => 'required|string|min:3|unique:m_barang,barang_kode',
-                'barang_nama' => 'required|string|max:100',
-                'harga_jual' => 'required|integer',
-                'harga_beli' => 'required|integer',
-            ];
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors(),
-                ]);
-            }
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            'kategori_id' => 'required|integer',
+            'barang_kode' => 'required|string|min:3|unique:m_barang,barang_kode',
+            'barang_nama' => 'required|string|max:100',
+            'harga_jual' => 'required|integer',
+            'harga_beli' => 'required|integer',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ];
 
-            barangmodel::create($request->all());
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
             return response()->json([
-                'status' => true,
-                'message' => 'Data barang berhasil disimpan'
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors(),
             ]);
         }
-        redirect('/');
+
+        // Store the avatar
+        $avatar = $request->avatar->storeAs('/avatar_barang', $request->avatar->hashName());
+
+        // Save the data to the database
+        $barang = BarangModel::create([
+            'kategori_id' => $request->kategori_id,
+            'barang_kode' => $request->barang_kode,
+            'barang_nama' => $request->barang_nama,
+            'harga_jual' => $request->harga_jual,
+            'harga_beli' => $request->harga_beli,
+            'avatar' => $avatar
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data barang berhasil disimpan'
+        ]);
     }
+
+    return redirect('/');
+}
 
     public function edit_ajax(string $barang_id)
     {
@@ -205,7 +220,7 @@ class barangcontroller extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'kategori_id' => 'required|integer',
-                'barang_kode' => 'required|string|min:3|unique:m_barang,barang_kode,'. $barang_id. ',barang_id',
+                'barang_kode' => 'required|string|min:3|unique:m_barang,barang_kode,' . $barang_id . ',barang_id',
                 'barang_nama' => 'required|string|max:100',
                 'harga_jual' => 'required|integer',
                 'harga_beli' => 'required|integer',
@@ -401,17 +416,18 @@ class barangcontroller extends Controller
         exit;
     }
 
-    public function export_pdf(){
-        $barang = barangmodel::select('kategori_id','barang_kode','barang_nama','harga_beli','harga_jual')
-        ->orderBy('kategori_id')
-        ->orderBy('barang_kode')
-        ->with('kategori')->get();
+    public function export_pdf()
+    {
+        $barang = barangmodel::select('kategori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual')
+            ->orderBy('kategori_id')
+            ->orderBy('barang_kode')
+            ->with('kategori')->get();
 
-        $pdf = Pdf::loadView('barang.export_pdf',['barang'=>$barang]);
-        $pdf->setPaper('a4','portrait'); //set ukuran kertas dan orientasi
+        $pdf = Pdf::loadView('barang.export_pdf', ['barang' => $barang]);
+        $pdf->setPaper('a4', 'portrait'); //set ukuran kertas dan orientasi
         $pdf->setOption("isRemoteEnabled", true); //set true jika ada gambar
         $pdf->render();
 
-        return $pdf->stream('Data Barang '.date('Y-m-d H:i:s'));
+        return $pdf->stream('Data Barang ' . date('Y-m-d H:i:s'));
     }
 }

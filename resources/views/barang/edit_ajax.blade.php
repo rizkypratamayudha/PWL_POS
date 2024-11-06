@@ -62,6 +62,12 @@
                             required>
                         <small id="error-harga_jual" class="error-text form-text text-danger"></small>
                     </div>
+                    <div class="form-group">
+                        <label>Gambar Barang</label>
+                        <input value="{{ $barang->harga_jual }}" type="file" name="avatar" id="avatar" class="form-control"
+                            required>
+                        <small id="error-harga_jual" class="error-text form-text text-danger"></small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btnwarning">Batal</button>

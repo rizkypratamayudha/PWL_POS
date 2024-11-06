@@ -207,8 +207,13 @@ class transaksicontroller extends Controller
 
     public function getHarga($id)
     {
-        $barang = barangmodel::find($id); // Assuming you have a Barang model
+        $barang = barangmodel::find($id);
         return response()->json(['harga_jual' => $barang->harga_jual]);
+    }
+
+    public function getAvatar($id){
+        $barang = barangmodel::find($id);
+        return response()->json(['avatar'=> $barang->avatar]);
     }
 
     public function import_ajax(Request $request)
