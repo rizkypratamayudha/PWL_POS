@@ -74,7 +74,7 @@ class LevelController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Kategori updated successfully',
+            'message' => 'Level updated successfully',
             'data' => $level
         ]);
     }
